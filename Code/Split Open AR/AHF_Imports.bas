@@ -65,10 +65,10 @@ Sub ImportGaps()
             Range("A2").AutoFill Destination:=Range(Cells(2, 1), Cells(iRows, 1))
             Range(Cells(2, 1), Cells(iRows, 1)).Value = Range(Cells(2, 1), Cells(iRows, 1)).Value
         Else
-            ERR.Raise 18, "ImportGaps", "Import canceled"
+            Err.Raise 18, "ImportGaps", "Import canceled"
         End If
     Else
-        ERR.Raise 53, "ImportGaps", "Gaps could not be found."
+        Err.Raise 53, "ImportGaps", "Gaps could not be found."
     End If
 
     Application.DisplayAlerts = True
@@ -114,7 +114,7 @@ Sub UserImportFile(DestRange As Range, Optional DelFile As Boolean = False, Opti
             DeleteFile File
         End If
     Else
-        ERR.Raise 18
+        Err.Raise 18
     End If
     Application.DisplayAlerts = OldDispAlert
 End Sub
@@ -132,7 +132,7 @@ Sub Import117byISN(RepType As ReportType, Destination As Range, Optional ByVal I
         ISN = InputBox("Inside Sales Number:", "Please enter the ISN#")
     Else
         If ISN = "" Then
-            ERR.Raise 53
+            Err.Raise 53
         End If
     End If
 
@@ -160,7 +160,7 @@ Sub Import117byISN(RepType As ReportType, Destination As Range, Optional ByVal I
             MsgBox Prompt:=ReportTypeText(RepType) & " report not found.", Title:="Error 53"
         End If
     Else
-        ERR.Raise 18
+        Err.Raise 18
     End If
 End Sub
 
@@ -187,7 +187,7 @@ Sub Import473(Destination As Range, Optional Branch As String = "3615")
         Application.DisplayAlerts = AlertStatus
     Else
         MsgBox Prompt:="473 report not found."
-        ERR.Raise 18
+        Err.Raise 18
     End If
 End Sub
 

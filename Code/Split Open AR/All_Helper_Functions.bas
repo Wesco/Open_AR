@@ -322,7 +322,7 @@ End Sub
 Function FindColumn(ByVal HeaderText As String, Optional SearchArea As Range) As Integer
     Dim i As Integer: i = 0
     Dim ColText As String
-
+    
     If TypeName(SearchArea) = "Nothing" Or TypeName(SearchArea) = Empty Then
         Set SearchArea = Range(Cells(1, 1), Cells(1, ActiveSheet.UsedRange.Columns.Count))
     End If
@@ -340,6 +340,6 @@ Function FindColumn(ByVal HeaderText As String, Optional SearchArea As Range) As
         End If
     Next
 
-    If FindColumn = 0 Then ERR.Raise CustErr.COLNOTFOUND, "FindColumn", HeaderText
+    If FindColumn = 0 Then Err.Raise CustErr.COLNOTFOUND, "FindColumn", HeaderText
 End Function
 

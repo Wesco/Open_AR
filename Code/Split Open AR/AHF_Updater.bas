@@ -121,7 +121,7 @@ End Sub
 ' Desc : Returns the contents of a text file from a website
 '---------------------------------------------------------------------------------------
 Private Function DownloadTextFile(URL As String) As String
-    Dim success As Boolean
+    Dim Success As Boolean
     Dim responseText As String
     Dim oHTTP As Variant
 
@@ -129,9 +129,9 @@ Private Function DownloadTextFile(URL As String) As String
 
     oHTTP.Open "GET", URL, False
     oHTTP.Send
-    success = oHTTP.WaitForResponse()
+    Success = oHTTP.WaitForResponse()
 
-    If Not success Then
+    If Not Success Then
         DownloadTextFile = ""
         Exit Function
     End If
