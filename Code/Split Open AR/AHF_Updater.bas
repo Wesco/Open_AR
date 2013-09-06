@@ -13,7 +13,7 @@ End Enum
 ' Desc : Increments the macros major version number (major.minor.patch)
 '---------------------------------------------------------------------------------------
 Sub IncrementMajor()
-    IncrementVer Major
+10        IncrementVer Major
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ End Sub
 ' Desc : Increments the macros minor version number (major.minor.patch)
 '---------------------------------------------------------------------------------------
 Sub IncrementMinor()
-    IncrementVer Minor
+10        IncrementVer Minor
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ End Sub
 ' Desc : Increments the macros patch number (major.minor.patch)
 '---------------------------------------------------------------------------------------
 Sub IncrementPatch()
-    IncrementVer Patch
+10        IncrementVer Patch
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -40,43 +40,43 @@ End Sub
 ' Desc :
 '---------------------------------------------------------------------------------------
 Private Sub IncrementVer(Version As Ver)
-    Dim Path As String
-    Dim Ver As Variant
-    Dim FileNum As Integer
-    Dim i As Integer
+          Dim Path As String
+          Dim Ver As Variant
+          Dim FileNum As Integer
+          Dim i As Integer
 
-    Path = GetWorkbookPath & "Version.txt"
-    FileNum = FreeFile
+10        Path = GetWorkbookPath & "Version.txt"
+20        FileNum = FreeFile
 
-    If FileExists(Path) = True Then
-        Open Path For Input As #FileNum
-        Line Input #FileNum, Ver
-        Close FileNum
+30        If FileExists(Path) = True Then
+40            Open Path For Input As #FileNum
+50            Line Input #FileNum, Ver
+60            Close FileNum
 
-        'Split version number
-        Ver = Split(Ver, ".")
+              'Split version number
+70            Ver = Split(Ver, ".")
 
-        'Increment version
-        Select Case Version
-            Case Major
-                Ver(0) = CInt(Ver(0)) + 1
-            Case Minor
-                Ver(1) = CInt(Ver(1)) + 1
-            Case Patch
-                Ver(2) = CInt(Ver(2)) + 1
-        End Select
+              'Increment version
+80            Select Case Version
+                  Case Major
+90                    Ver(0) = CInt(Ver(0)) + 1
+100               Case Minor
+110                   Ver(1) = CInt(Ver(1)) + 1
+120               Case Patch
+130                   Ver(2) = CInt(Ver(2)) + 1
+140           End Select
 
-        'Combine version
-        Ver = Ver(0) & "." & Ver(1) & "." & Ver(2)
+              'Combine version
+150           Ver = Ver(0) & "." & Ver(1) & "." & Ver(2)
 
-        Open Path For Output As #FileNum
-        Print #FileNum, Ver
-        Close #FileNum
-    Else
-        Open Path For Output As #FileNum
-        Print #FileNum, "1.0.0"
-        Close #FileNum
-    End If
+160           Open Path For Output As #FileNum
+170           Print #FileNum, Ver
+180           Close #FileNum
+190       Else
+200           Open Path For Output As #FileNum
+210           Print #FileNum, "1.0.0"
+220           Close #FileNum
+230       End If
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -85,34 +85,34 @@ End Sub
 ' Desc : Checks to see if the macro is up to date
 '---------------------------------------------------------------------------------------
 Sub CheckForUpdates(URL As String, Optional RepoName As String = "")
-    Dim Ver As Variant
-    Dim LocalVer As Variant
-    Dim Path As String
-    Dim LocalPath As String
-    Dim FileNum As Integer
-    Dim RegEx As Variant
+          Dim Ver As Variant
+          Dim LocalVer As Variant
+          Dim Path As String
+          Dim LocalPath As String
+          Dim FileNum As Integer
+          Dim RegEx As Variant
 
-    Set RegEx = CreateObject("VBScript.RegExp")
-    Ver = DownloadTextFile(URL)
-    Ver = Ver & vbCrLf
-    Ver = Replace(Ver, vbLf, "")
-    Ver = Replace(Ver, vbCr, "")
-    RegEx.Pattern = "^[0-9]+\.[0-9]+\.[0-9]+$"
-    Path = GetWorkbookPath & "Version.txt"
-    FileNum = FreeFile
+10        Set RegEx = CreateObject("VBScript.RegExp")
+20        Ver = DownloadTextFile(URL)
+30        Ver = Ver & vbCrLf
+40        Ver = Replace(Ver, vbLf, "")
+50        Ver = Replace(Ver, vbCr, "")
+60        RegEx.Pattern = "^[0-9]+\.[0-9]+\.[0-9]+$"
+70        Path = GetWorkbookPath & "Version.txt"
+80        FileNum = FreeFile
 
-    Open Path For Input As #FileNum
-    Line Input #FileNum, LocalVer
-    Close FileNum
+90        Open Path For Input As #FileNum
+100       Line Input #FileNum, LocalVer
+110       Close FileNum
 
-    If RegEx.test(Ver) Then
-        If Not Ver = LocalVer Then
-            MsgBox Prompt:="An update is available. Please close the macro and get the latest version!", Title:="Update Available"
-            If Not RepoName = "" Then
-                Shell "C:\Program Files\Internet Explorer\iexplore.exe http://github.com/Wesco/" & RepoName & "/releases/", vbMaximizedFocus
-            End If
-        End If
-    End If
+120       If RegEx.test(Ver) Then
+130           If Not Ver = LocalVer Then
+140               MsgBox Prompt:="An update is available. Please close the macro and get the latest version!", Title:="Update Available"
+150               If Not RepoName = "" Then
+160                   Shell "C:\Program Files\Internet Explorer\iexplore.exe http://github.com/Wesco/" & RepoName & "/releases/", vbMaximizedFocus
+170               End If
+180           End If
+190       End If
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -121,24 +121,24 @@ End Sub
 ' Desc : Returns the contents of a text file from a website
 '---------------------------------------------------------------------------------------
 Private Function DownloadTextFile(URL As String) As String
-    Dim Success As Boolean
-    Dim responseText As String
-    Dim oHTTP As Variant
+          Dim Success As Boolean
+          Dim responseText As String
+          Dim oHTTP As Variant
 
-    Set oHTTP = CreateObject("WinHttp.WinHttpRequest.5.1")
+10        Set oHTTP = CreateObject("WinHttp.WinHttpRequest.5.1")
 
-    oHTTP.Open "GET", URL, False
-    oHTTP.Send
-    Success = oHTTP.WaitForResponse()
+20        oHTTP.Open "GET", URL, False
+30        oHTTP.Send
+40        Success = oHTTP.WaitForResponse()
 
-    If Not Success Then
-        DownloadTextFile = ""
-        Exit Function
-    End If
+50        If Not Success Then
+60            DownloadTextFile = ""
+70            Exit Function
+80        End If
 
-    responseText = oHTTP.responseText
-    Set oHTTP = Nothing
+90        responseText = oHTTP.responseText
+100       Set oHTTP = Nothing
 
-    DownloadTextFile = responseText
+110       DownloadTextFile = responseText
 End Function
 

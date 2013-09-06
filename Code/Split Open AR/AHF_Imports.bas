@@ -8,76 +8,76 @@ Option Explicit
 ' Ex    : ImportGaps
 '---------------------------------------------------------------------------------------
 Sub ImportGaps()
-    Dim sPath As String     'Gaps file path
-    Dim sName As String     'Gaps Sheet Name
-    Dim iCounter As Long    'Counter to decrement the date
-    Dim iRows As Long       'Total number of rows
-    Dim dt As Date          'Date for gaps file name and path
-    Dim Result As VbMsgBoxResult    'Yes/No to proceed with old gaps file if current one isn't found
-    Dim Gaps As Worksheet           'The sheet named gaps if it exists, else this = nothing
-    Dim StartTime As Double         'The time this function was started
-    Dim FileFound As Boolean        'Indicates whether or not gaps was found
+          Dim sPath As String     'Gaps file path
+          Dim sName As String     'Gaps Sheet Name
+          Dim iCounter As Long    'Counter to decrement the date
+          Dim iRows As Long       'Total number of rows
+          Dim dt As Date          'Date for gaps file name and path
+          Dim Result As VbMsgBoxResult    'Yes/No to proceed with old gaps file if current one isn't found
+          Dim Gaps As Worksheet           'The sheet named gaps if it exists, else this = nothing
+          Dim StartTime As Double         'The time this function was started
+          Dim FileFound As Boolean        'Indicates whether or not gaps was found
 
-    StartTime = Timer
-    FileFound = False
+10        StartTime = Timer
+20        FileFound = False
 
-    'This error is bypassed so you can determine whether or not the sheet exists
-    On Error GoTo CREATE_GAPS
-    Set Gaps = ThisWorkbook.Sheets("Gaps")
-    On Error GoTo 0
+          'This error is bypassed so you can determine whether or not the sheet exists
+30        On Error GoTo CREATE_GAPS
+40        Set Gaps = ThisWorkbook.Sheets("Gaps")
+50        On Error GoTo 0
 
-    Application.DisplayAlerts = False
+60        Application.DisplayAlerts = False
 
-    'Find gaps
-    For iCounter = 0 To 15
-        dt = Date - iCounter
-        sPath = "\\br3615gaps\gaps\3615 Gaps Download\" & Format(dt, "yyyy") & "\"
-        sName = "3615 " & Format(dt, "yyyy-mm-dd") & ".xlsx"
-        If FileExists(sPath & sName) Then
-            FileFound = True
-            Exit For
-        End If
-    Next
+          'Find gaps
+70        For iCounter = 0 To 15
+80            dt = Date - iCounter
+90            sPath = "\\br3615gaps\gaps\3615 Gaps Download\" & Format(dt, "yyyy") & "\"
+100           sName = "3615 " & Format(dt, "yyyy-mm-dd") & ".xlsx"
+110           If FileExists(sPath & sName) Then
+120               FileFound = True
+130               Exit For
+140           End If
+150       Next
 
-    'Make sure Gaps file was found
-    If FileFound = True Then
-        If dt <> Date Then
-            Result = MsgBox( _
-                     Prompt:="Gaps from " & Format(dt, "mmm dd, yyyy") & " was found." & vbCrLf & "Would you like to continue?", _
-                     Buttons:=vbYesNo, _
-                     Title:="Gaps not up to date")
-        End If
+          'Make sure Gaps file was found
+160       If FileFound = True Then
+170           If dt <> Date Then
+180               Result = MsgBox( _
+                           Prompt:="Gaps from " & Format(dt, "mmm dd, yyyy") & " was found." & vbCrLf & "Would you like to continue?", _
+                           Buttons:=vbYesNo, _
+                           Title:="Gaps not up to date")
+190           End If
 
-        If Result <> vbNo Then
-            If ThisWorkbook.Sheets("Gaps").Range("A1").Value <> "" Then
-                Gaps.Cells.Delete
-            End If
+200           If Result <> vbNo Then
+210               If ThisWorkbook.Sheets("Gaps").Range("A1").Value <> "" Then
+220                   Gaps.Cells.Delete
+230               End If
 
-            Workbooks.Open sPath & sName
-            ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Sheets("Gaps").Range("A1")
-            ActiveWorkbook.Close
+240               Workbooks.Open sPath & sName
+250               ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Sheets("Gaps").Range("A1")
+260               ActiveWorkbook.Close
 
-            Sheets("Gaps").Select
-            iRows = ActiveSheet.UsedRange.Rows.Count
-            Columns(1).EntireColumn.Insert
-            Range("A1").Value = "SIM"
-            Range("A2").Formula = "=C2&D2"
-            Range("A2").AutoFill Destination:=Range(Cells(2, 1), Cells(iRows, 1))
-            Range(Cells(2, 1), Cells(iRows, 1)).Value = Range(Cells(2, 1), Cells(iRows, 1)).Value
-        Else
-            Err.Raise 18, "ImportGaps", "Import canceled"
-        End If
-    Else
-        Err.Raise 53, "ImportGaps", "Gaps could not be found."
-    End If
+270               Sheets("Gaps").Select
+280               iRows = ActiveSheet.UsedRange.Rows.Count
+290               Columns(1).EntireColumn.Insert
+300               Range("A1").Value = "SIM"
+310               Range("A2").Formula = "=C2&D2"
+320               Range("A2").AutoFill Destination:=Range(Cells(2, 1), Cells(iRows, 1))
+330               Range(Cells(2, 1), Cells(iRows, 1)).Value = Range(Cells(2, 1), Cells(iRows, 1)).Value
+340           Else
+350               Err.Raise 18, "ImportGaps", "Import canceled"
+360           End If
+370       Else
+380           Err.Raise 53, "ImportGaps", "Gaps could not be found."
+390       End If
 
-    Application.DisplayAlerts = True
-    Exit Sub
+400       Application.DisplayAlerts = True
+410       Exit Sub
 
 CREATE_GAPS:
-    ThisWorkbook.Sheets.Add After:=Sheets(ThisWorkbook.Sheets.Count)
-    ActiveSheet.Name = "Gaps"
-    Resume
+420       ThisWorkbook.Sheets.Add After:=Sheets(ThisWorkbook.Sheets.Count)
+430       ActiveSheet.Name = "Gaps"
+440       Resume
 
 End Sub
 
@@ -87,36 +87,36 @@ End Sub
 ' Desc : Prompts the user to select a file for import
 '---------------------------------------------------------------------------------------
 Sub UserImportFile(DestRange As Range, Optional DelFile As Boolean = False, Optional ShowAllData As Boolean = False, Optional SourceSheet As String = "", Optional FileFilter = "")
-    Dim File As String              'Full path to user selected file
-    Dim FileDate As String          'Date the file was last modified
-    Dim OldDispAlert As Boolean     'Original state of Application.DisplayAlerts
+          Dim File As String              'Full path to user selected file
+          Dim FileDate As String          'Date the file was last modified
+          Dim OldDispAlert As Boolean     'Original state of Application.DisplayAlerts
 
-    OldDispAlert = Application.DisplayAlerts
-    File = Application.GetOpenFilename(FileFilter)
+10        OldDispAlert = Application.DisplayAlerts
+20        File = Application.GetOpenFilename(FileFilter)
 
-    Application.DisplayAlerts = False
-    If File <> "False" Then
-        FileDate = Format(FileDateTime(File), "mm/dd/yy")
-        Workbooks.Open File
-        If SourceSheet = "" Then SourceSheet = ActiveSheet.Name
-        If ShowAllData = True Then
-            On Error Resume Next
-            ActiveSheet.AutoFilter.ShowAllData
-            ActiveSheet.UsedRange.Columns.Hidden = False
-            ActiveSheet.UsedRange.Rows.Hidden = False
-            On Error GoTo 0
-        End If
-        Sheets(SourceSheet).UsedRange.Copy Destination:=DestRange
-        ActiveWorkbook.Close
-        ThisWorkbook.Activate
+30        Application.DisplayAlerts = False
+40        If File <> "False" Then
+50            FileDate = Format(FileDateTime(File), "mm/dd/yy")
+60            Workbooks.Open File
+70            If SourceSheet = "" Then SourceSheet = ActiveSheet.Name
+80            If ShowAllData = True Then
+90                On Error Resume Next
+100               ActiveSheet.AutoFilter.ShowAllData
+110               ActiveSheet.UsedRange.Columns.Hidden = False
+120               ActiveSheet.UsedRange.Rows.Hidden = False
+130               On Error GoTo 0
+140           End If
+150           Sheets(SourceSheet).UsedRange.Copy Destination:=DestRange
+160           ActiveWorkbook.Close
+170           ThisWorkbook.Activate
 
-        If DelFile = True Then
-            DeleteFile File
-        End If
-    Else
-        Err.Raise 18
-    End If
-    Application.DisplayAlerts = OldDispAlert
+180           If DelFile = True Then
+190               DeleteFile File
+200           End If
+210       Else
+220           Err.Raise 18
+230       End If
+240       Application.DisplayAlerts = OldDispAlert
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -125,43 +125,43 @@ End Sub
 ' Desc : Imports the most recent 117 report for the specified sales number
 '---------------------------------------------------------------------------------------
 Sub Import117byISN(RepType As ReportType, Destination As Range, Optional ByVal ISN As String = "", Optional Cancel As Boolean = False)
-    Dim sPath As String
-    Dim FileName As String
+          Dim sPath As String
+          Dim FileName As String
 
-    If ISN = "" And Cancel = False Then
-        ISN = InputBox("Inside Sales Number:", "Please enter the ISN#")
-    Else
-        If ISN = "" Then
-            Err.Raise 53
-        End If
-    End If
+10        If ISN = "" And Cancel = False Then
+20            ISN = InputBox("Inside Sales Number:", "Please enter the ISN#")
+30        Else
+40            If ISN = "" Then
+50                Err.Raise 53
+60            End If
+70        End If
 
-    If ISN <> "" Then
-        Select Case RepType
-            Case ReportType.DS:
-                FileName = "3615 " & Format(Date, "m-dd-yy") & " DSORDERS.xlsx"
+80        If ISN <> "" Then
+90            Select Case RepType
+                  Case ReportType.DS:
+100                   FileName = "3615 " & Format(Date, "m-dd-yy") & " DSORDERS.xlsx"
 
-            Case ReportType.BO:
-                FileName = "3615 " & Format(Date, "m-dd-yy") & " BACKORDERS.xlsx"
+110               Case ReportType.BO:
+120                   FileName = "3615 " & Format(Date, "m-dd-yy") & " BACKORDERS.xlsx"
 
-            Case ReportType.ALL
-                FileName = "3615 " & Format(Date, "m-dd-yy") & " ALLORDERS.xlsx"
-        End Select
+130               Case ReportType.ALL
+140                   FileName = "3615 " & Format(Date, "m-dd-yy") & " ALLORDERS.xlsx"
+150           End Select
 
-        sPath = "\\br3615gaps\gaps\3615 117 Report\ByInsideSalesNumber\" & ISN & "\" & FileName
+160           sPath = "\\br3615gaps\gaps\3615 117 Report\ByInsideSalesNumber\" & ISN & "\" & FileName
 
-        If FileExists(sPath) Then
-            Workbooks.Open sPath
-            ActiveSheet.UsedRange.Copy Destination:=Destination
-            Application.DisplayAlerts = False
-            ActiveWorkbook.Close
-            Application.DisplayAlerts = True
-        Else
-            MsgBox Prompt:=ReportTypeText(RepType) & " report not found.", Title:="Error 53"
-        End If
-    Else
-        Err.Raise 18
-    End If
+170           If FileExists(sPath) Then
+180               Workbooks.Open sPath
+190               ActiveSheet.UsedRange.Copy Destination:=Destination
+200               Application.DisplayAlerts = False
+210               ActiveWorkbook.Close
+220               Application.DisplayAlerts = True
+230           Else
+240               MsgBox Prompt:=ReportTypeText(RepType) & " report not found.", Title:="Error 53"
+250           End If
+260       Else
+270           Err.Raise 18
+280       End If
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -170,25 +170,25 @@ End Sub
 ' Desc : Imports a 473 report from the current day
 '---------------------------------------------------------------------------------------
 Sub Import473(Destination As Range, Optional Branch As String = "3615")
-    Dim sPath As String
-    Dim FileName As String
-    Dim AlertStatus As Boolean
+          Dim sPath As String
+          Dim FileName As String
+          Dim AlertStatus As Boolean
 
-    FileName = "473 " & Format(Date, "m-dd-yy") & ".xlsx"
-    sPath = "\\br3615gaps\gaps\" & Branch & " 473 Download\" & FileName
-    AlertStatus = Application.DisplayAlerts
+10        FileName = "473 " & Format(Date, "m-dd-yy") & ".xlsx"
+20        sPath = "\\br3615gaps\gaps\" & Branch & " 473 Download\" & FileName
+30        AlertStatus = Application.DisplayAlerts
 
-    If FileExists(sPath) Then
-        Workbooks.Open sPath
-        ActiveSheet.UsedRange.Copy Destination:=Destination
+40        If FileExists(sPath) Then
+50            Workbooks.Open sPath
+60            ActiveSheet.UsedRange.Copy Destination:=Destination
 
-        Application.DisplayAlerts = False
-        ActiveWorkbook.Close
-        Application.DisplayAlerts = AlertStatus
-    Else
-        MsgBox Prompt:="473 report not found."
-        Err.Raise 18
-    End If
+70            Application.DisplayAlerts = False
+80            ActiveWorkbook.Close
+90            Application.DisplayAlerts = AlertStatus
+100       Else
+110           MsgBox Prompt:="473 report not found."
+120           Err.Raise 18
+130       End If
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -197,15 +197,15 @@ End Sub
 ' Desc : Imports the supplier contact master list
 '---------------------------------------------------------------------------------------
 Sub ImportSupplierContacts(Destination As Range)
-    Const sPath As String = "\\br3615gaps\gaps\Contacts\Supplier Contact Master.xlsx"
-    Dim PrevDispAlerts As Boolean
+          Const sPath As String = "\\br3615gaps\gaps\Contacts\Supplier Contact Master.xlsx"
+          Dim PrevDispAlerts As Boolean
 
-    PrevDispAlerts = Application.DisplayAlerts
+10        PrevDispAlerts = Application.DisplayAlerts
 
-    Workbooks.Open sPath
-    ActiveSheet.UsedRange.Copy Destination:=Destination
+20        Workbooks.Open sPath
+30        ActiveSheet.UsedRange.Copy Destination:=Destination
 
-    Application.DisplayAlerts = False
-    ActiveWorkbook.Close
-    Application.DisplayAlerts = PrevDispAlerts
+40        Application.DisplayAlerts = False
+50        ActiveWorkbook.Close
+60        Application.DisplayAlerts = PrevDispAlerts
 End Sub

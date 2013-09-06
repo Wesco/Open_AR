@@ -37,59 +37,59 @@ End Enum
 ' Desc : Remove all rows that do not match a specified string
 '---------------------------------------------------------------------------------------
 Sub FilterSheet(sFilter As String, ColNum As Integer, Match As Boolean)
-    Dim Rng As Range
-    Dim aRng() As Variant
-    Dim aHeaders As Variant
-    Dim StartTime As Double
-    Dim iCounter As Long
-    Dim i As Long
-    Dim y As Long
+          Dim Rng As Range
+          Dim aRng() As Variant
+          Dim aHeaders As Variant
+          Dim StartTime As Double
+          Dim iCounter As Long
+          Dim i As Long
+          Dim y As Long
 
-    StartTime = Timer
-    Set Rng = ActiveSheet.UsedRange
-    aHeaders = Range(Cells(1, 1), Cells(1, ActiveSheet.UsedRange.Columns.Count))
-    iCounter = 1
+10        StartTime = Timer
+20        Set Rng = ActiveSheet.UsedRange
+30        aHeaders = Range(Cells(1, 1), Cells(1, ActiveSheet.UsedRange.Columns.Count))
+40        iCounter = 1
 
-    Do While iCounter <= Rng.Rows.Count
-        If Match = True Then
-            If Rng(iCounter, ColNum).Value = sFilter Then
-                i = i + 1
-            End If
-        Else
-            If Rng(iCounter, ColNum).Value <> sFilter Then
-                i = i + 1
-            End If
-        End If
-        iCounter = iCounter + 1
-    Loop
+50        Do While iCounter <= Rng.Rows.Count
+60            If Match = True Then
+70                If Rng(iCounter, ColNum).Value = sFilter Then
+80                    i = i + 1
+90                End If
+100           Else
+110               If Rng(iCounter, ColNum).Value <> sFilter Then
+120                   i = i + 1
+130               End If
+140           End If
+150           iCounter = iCounter + 1
+160       Loop
 
-    ReDim aRng(1 To i, 1 To Rng.Columns.Count) As Variant
+170       ReDim aRng(1 To i, 1 To Rng.Columns.Count) As Variant
 
-    iCounter = 1
-    i = 0
-    Do While iCounter <= Rng.Rows.Count
-        If Match = True Then
-            If Rng(iCounter, ColNum).Value = sFilter Then
-                i = i + 1
-                For y = 1 To Rng.Columns.Count
-                    aRng(i, y) = Rng(iCounter, y)
-                Next
-            End If
-        Else
-            If Rng(iCounter, ColNum).Value <> sFilter Then
-                i = i + 1
-                For y = 1 To Rng.Columns.Count
-                    aRng(i, y) = Rng(iCounter, y)
-                Next
-            End If
-        End If
-        iCounter = iCounter + 1
-    Loop
+180       iCounter = 1
+190       i = 0
+200       Do While iCounter <= Rng.Rows.Count
+210           If Match = True Then
+220               If Rng(iCounter, ColNum).Value = sFilter Then
+230                   i = i + 1
+240                   For y = 1 To Rng.Columns.Count
+250                       aRng(i, y) = Rng(iCounter, y)
+260                   Next
+270               End If
+280           Else
+290               If Rng(iCounter, ColNum).Value <> sFilter Then
+300                   i = i + 1
+310                   For y = 1 To Rng.Columns.Count
+320                       aRng(i, y) = Rng(iCounter, y)
+330                   Next
+340               End If
+350           End If
+360           iCounter = iCounter + 1
+370       Loop
 
-    ActiveSheet.Cells.Delete
-    Range(Cells(1, 1), Cells(UBound(aRng, 1), UBound(aRng, 2))) = aRng
-    Rows(1).Insert
-    Range(Cells(1, 1), Cells(1, UBound(aHeaders, 2))) = aHeaders
+380       ActiveSheet.Cells.Delete
+390       Range(Cells(1, 1), Cells(UBound(aRng, 1), UBound(aRng, 2))) = aRng
+400       Rows(1).Insert
+410       Range(Cells(1, 1), Cells(1, UBound(aHeaders, 2))) = aHeaders
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -98,40 +98,40 @@ End Sub
 ' Desc : Exports all modules
 '---------------------------------------------------------------------------------------
 Sub ExportCode()
-    Dim comp As Variant
-    Dim codeFolder As String
-    Dim FileName As String
-    Dim File As String
+          Dim comp As Variant
+          Dim codeFolder As String
+          Dim FileName As String
+          Dim File As String
 
-    'References Microsoft Visual Basic for Applications Extensibility 5.3
-    AddReference "{0002E157-0000-0000-C000-000000000046}", 5, 3
-    codeFolder = GetWorkbookPath & "Code\" & Left(ThisWorkbook.Name, Len(ThisWorkbook.Name) - 5) & "\"
+          'References Microsoft Visual Basic for Applications Extensibility 5.3
+10        AddReference "{0002E157-0000-0000-C000-000000000046}", 5, 3
+20        codeFolder = GetWorkbookPath & "Code\" & Left(ThisWorkbook.Name, Len(ThisWorkbook.Name) - 5) & "\"
 
-    On Error Resume Next
-    RecMkDir codeFolder
-    On Error GoTo 0
+30        On Error Resume Next
+40        RecMkDir codeFolder
+50        On Error GoTo 0
 
-    'Remove all previously exported modules
-    File = Dir(codeFolder)
-    Do While File <> ""
-        DeleteFile codeFolder & File
-        File = Dir
-    Loop
+          'Remove all previously exported modules
+60        File = Dir(codeFolder)
+70        Do While File <> ""
+80            DeleteFile codeFolder & File
+90            File = Dir
+100       Loop
 
-    'Export modules in current project
-    For Each comp In ThisWorkbook.VBProject.VBComponents
-        Select Case comp.Type
-            Case 1
-                FileName = codeFolder & comp.Name & ".bas"
-                comp.Export FileName
-            Case 2
-                FileName = codeFolder & comp.Name & ".cls"
-                comp.Export FileName
-            Case 3
-                FileName = codeFolder & comp.Name & ".frm"
-                comp.Export FileName
-        End Select
-    Next
+          'Export modules in current project
+110       For Each comp In ThisWorkbook.VBProject.VBComponents
+120           Select Case comp.Type
+                  Case 1
+130                   FileName = codeFolder & comp.Name & ".bas"
+140                   comp.Export FileName
+150               Case 2
+160                   FileName = codeFolder & comp.Name & ".cls"
+170                   comp.Export FileName
+180               Case 3
+190                   FileName = codeFolder & comp.Name & ".frm"
+200                   comp.Export FileName
+210           End Select
+220       Next
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -140,38 +140,38 @@ End Sub
 ' Desc : Imports a code module into VBProject
 '---------------------------------------------------------------------------------------
 Sub ImportModule()
-    Dim comp As Variant
-    Dim codeFolder As String
-    Dim FileName As String
-    Dim WkbkPath As String
+          Dim comp As Variant
+          Dim codeFolder As String
+          Dim FileName As String
+          Dim WkbkPath As String
 
-    'Adds a reference to Microsoft Visual Basic for Applications Extensibility 5.3
-    AddReference "{0002E157-0000-0000-C000-000000000046}", 5, 3
+          'Adds a reference to Microsoft Visual Basic for Applications Extensibility 5.3
+10        AddReference "{0002E157-0000-0000-C000-000000000046}", 5, 3
 
-    'Gets the path to this workbook
-    WkbkPath = Left$(ThisWorkbook.fullName, InStr(1, ThisWorkbook.fullName, ThisWorkbook.Name, vbTextCompare) - 1)
+          'Gets the path to this workbook
+20        WkbkPath = Left$(ThisWorkbook.fullName, InStr(1, ThisWorkbook.fullName, ThisWorkbook.Name, vbTextCompare) - 1)
 
-    'Gets the path to this workbooks code
-    codeFolder = WkbkPath & "Code\" & Left(ThisWorkbook.Name, Len(ThisWorkbook.Name) - 5) & "\"
+          'Gets the path to this workbooks code
+30        codeFolder = WkbkPath & "Code\" & Left(ThisWorkbook.Name, Len(ThisWorkbook.Name) - 5) & "\"
 
-    For Each comp In ThisWorkbook.VBProject.VBComponents
-        If comp.Name <> "All_Helper_Functions" Then
-            Select Case comp.Type
-                Case 1
-                    FileName = codeFolder & comp.Name & ".bas"
-                    ThisWorkbook.VBProject.VBComponents.Remove comp
-                    ThisWorkbook.VBProject.VBComponents.Import FileName
-                Case 2
-                    FileName = codeFolder & comp.Name & ".cls"
-                    ThisWorkbook.VBProject.VBComponents.Remove comp
-                    ThisWorkbook.VBProject.VBComponents.Import FileName
-                Case 3
-                    FileName = codeFolder & comp.Name & ".frm"
-                    ThisWorkbook.VBProject.VBComponents.Remove comp
-                    ThisWorkbook.VBProject.VBComponents.Import FileName
-            End Select
-        End If
-    Next
+40        For Each comp In ThisWorkbook.VBProject.VBComponents
+50            If comp.Name <> "All_Helper_Functions" Then
+60                Select Case comp.Type
+                      Case 1
+70                        FileName = codeFolder & comp.Name & ".bas"
+80                        ThisWorkbook.VBProject.VBComponents.Remove comp
+90                        ThisWorkbook.VBProject.VBComponents.Import FileName
+100                   Case 2
+110                       FileName = codeFolder & comp.Name & ".cls"
+120                       ThisWorkbook.VBProject.VBComponents.Remove comp
+130                       ThisWorkbook.VBProject.VBComponents.Import FileName
+140                   Case 3
+150                       FileName = codeFolder & comp.Name & ".frm"
+160                       ThisWorkbook.VBProject.VBComponents.Remove comp
+170                       ThisWorkbook.VBProject.VBComponents.Import FileName
+180               End Select
+190           End If
+200       Next
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -180,16 +180,16 @@ End Sub
 ' Desc : Gets the full path of ThisWorkbook
 '---------------------------------------------------------------------------------------
 Function GetWorkbookPath() As String
-    Dim fullName As String
-    Dim wrkbookName As String
-    Dim pos As Long
+          Dim fullName As String
+          Dim wrkbookName As String
+          Dim pos As Long
 
-    wrkbookName = ThisWorkbook.Name
-    fullName = ThisWorkbook.fullName
+10        wrkbookName = ThisWorkbook.Name
+20        fullName = ThisWorkbook.fullName
 
-    pos = InStr(1, fullName, wrkbookName, vbTextCompare)
+30        pos = InStr(1, fullName, wrkbookName, vbTextCompare)
 
-    GetWorkbookPath = Left$(fullName, pos - 1)
+40        GetWorkbookPath = Left$(fullName, pos - 1)
 End Function
 
 '---------------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ End Function
 ' Desc : Checks if a string ends in a specified character
 '---------------------------------------------------------------------------------------
 Function EndsWith(ByVal InString As String, ByVal TestString As String) As Boolean
-    EndsWith = (Right$(InString, Len(TestString)) = TestString)
+10        EndsWith = (Right$(InString, Len(TestString)) = TestString)
 End Function
 
 '---------------------------------------------------------------------------------------
@@ -207,21 +207,21 @@ End Function
 ' Desc : Adds a reference to VBProject
 '---------------------------------------------------------------------------------------
 Sub AddReference(GUID As String, Major As Integer, Minor As Integer)
-    Dim ID As Variant
-    Dim Ref As Variant
-    Dim Result As Boolean
+          Dim ID As Variant
+          Dim Ref As Variant
+          Dim Result As Boolean
 
 
-    For Each Ref In ThisWorkbook.VBProject.References
-        If Ref.GUID = GUID And Ref.Major = Major And Ref.Minor = Minor Then
-            Result = True
-        End If
-    Next
+10        For Each Ref In ThisWorkbook.VBProject.References
+20            If Ref.GUID = GUID And Ref.Major = Major And Ref.Minor = Minor Then
+30                Result = True
+40            End If
+50        Next
 
-    'References Microsoft Visual Basic for Applications Extensibility 5.3
-    If Result = False Then
-        ThisWorkbook.VBProject.References.AddFromGuid GUID, Major, Minor
-    End If
+          'References Microsoft Visual Basic for Applications Extensibility 5.3
+60        If Result = False Then
+70            ThisWorkbook.VBProject.References.AddFromGuid GUID, Major, Minor
+80        End If
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -230,13 +230,13 @@ End Sub
 ' Desc : Removes a reference from VBProject
 '---------------------------------------------------------------------------------------
 Sub RemoveReference(GUID As String, Major As Integer, Minor As Integer)
-    Dim Ref As Variant
+          Dim Ref As Variant
 
-    For Each Ref In ThisWorkbook.VBProject.References
-        If Ref.GUID = GUID And Ref.Major = Major And Ref.Minor = Minor Then
-            Application.VBE.ActiveVBProject.References.Remove Ref
-        End If
-    Next
+10        For Each Ref In ThisWorkbook.VBProject.References
+20            If Ref.GUID = GUID And Ref.Major = Major And Ref.Minor = Minor Then
+30                Application.VBE.ActiveVBProject.References.Remove Ref
+40            End If
+50        Next
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -245,39 +245,39 @@ End Sub
 ' Desc : Lists all VBProject references
 '---------------------------------------------------------------------------------------
 Sub ShowReferences()
-    Dim i As Variant
-    Dim n As Integer
+          Dim i As Variant
+          Dim n As Integer
 
-    ThisWorkbook.Activate
-    On Error GoTo SHEET_EXISTS
-    Sheets("VBA References").Select
-    ActiveSheet.Cells.Delete
-    On Error GoTo 0
+10        ThisWorkbook.Activate
+20        On Error GoTo SHEET_EXISTS
+30        Sheets("VBA References").Select
+40        ActiveSheet.Cells.Delete
+50        On Error GoTo 0
 
-    [A1].Value = "Name"
-    [B1].Value = "Description"
-    [C1].Value = "GUID"
-    [D1].Value = "Major"
-    [E1].Value = "Minor"
+60        [A1].Value = "Name"
+70        [B1].Value = "Description"
+80        [C1].Value = "GUID"
+90        [D1].Value = "Major"
+100       [E1].Value = "Minor"
 
-    For i = 1 To ThisWorkbook.VBProject.References.Count
-        n = i + 1
-        With ThisWorkbook.VBProject.References(i)
-            Cells(n, 1).Value = .Name
-            Cells(n, 2).Value = .Description
-            Cells(n, 3).Value = .GUID
-            Cells(n, 4).Value = .Major
-            Cells(n, 5).Value = .Minor
-        End With
-    Next
-    Columns.AutoFit
+110       For i = 1 To ThisWorkbook.VBProject.References.Count
+120           n = i + 1
+130           With ThisWorkbook.VBProject.References(i)
+140               Cells(n, 1).Value = .Name
+150               Cells(n, 2).Value = .Description
+160               Cells(n, 3).Value = .GUID
+170               Cells(n, 4).Value = .Major
+180               Cells(n, 5).Value = .Minor
+190           End With
+200       Next
+210       Columns.AutoFit
 
-    Exit Sub
+220       Exit Sub
 
 SHEET_EXISTS:
-    ThisWorkbook.Sheets.Add After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count), Count:=1
-    ActiveSheet.Name = "VBA References"
-    Resume Next
+230       ThisWorkbook.Sheets.Add After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count), Count:=1
+240       ActiveSheet.Name = "VBA References"
+250       Resume Next
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -286,16 +286,16 @@ End Sub
 ' Desc : Returns the report type as a string
 '---------------------------------------------------------------------------------------
 Function ReportTypeText(RepType As ReportType) As String
-    Select Case RepType
-        Case ReportType.BO:
-            ReportTypeText = "BO"
-        Case ReportType.DS:
-            ReportTypeText = "DS"
-        Case ReportType.ALL:
-            ReportTypeText = "ALL"
-        Case ReportType.INQ:
-            ReportTypeText = "INQ"
-    End Select
+10        Select Case RepType
+              Case ReportType.BO:
+20                ReportTypeText = "BO"
+30            Case ReportType.DS:
+40                ReportTypeText = "DS"
+50            Case ReportType.ALL:
+60                ReportTypeText = "ALL"
+70            Case ReportType.INQ:
+80                ReportTypeText = "INQ"
+90        End Select
 End Function
 
 '---------------------------------------------------------------------------------------
@@ -304,14 +304,14 @@ End Function
 ' Desc : Removes a column based on text in the column header
 '---------------------------------------------------------------------------------------
 Sub DeleteColumn(HeaderText As String)
-    Dim i As Integer
+          Dim i As Integer
 
-    For i = ActiveSheet.UsedRange.Columns.Count To 1 Step -1
-        If Trim(Cells(1, i).Value) = HeaderText Then
-            Columns(i).Delete
-            Exit For
-        End If
-    Next
+10        For i = ActiveSheet.UsedRange.Columns.Count To 1 Step -1
+20            If Trim(Cells(1, i).Value) = HeaderText Then
+30                Columns(i).Delete
+40                Exit For
+50            End If
+60        Next
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -320,26 +320,26 @@ End Sub
 ' Desc : Returns the column number if a match is found
 '---------------------------------------------------------------------------------------
 Function FindColumn(ByVal HeaderText As String, Optional SearchArea As Range) As Integer
-    Dim i As Integer: i = 0
-    Dim ColText As String
-    
-    If TypeName(SearchArea) = "Nothing" Or TypeName(SearchArea) = Empty Then
-        Set SearchArea = Range(Cells(1, 1), Cells(1, ActiveSheet.UsedRange.Columns.Count))
-    End If
+10        Dim i As Integer: i = 0
+          Dim ColText As String
+          
+20        If TypeName(SearchArea) = "Nothing" Or TypeName(SearchArea) = Empty Then
+30            Set SearchArea = Range(Cells(1, 1), Cells(1, ActiveSheet.UsedRange.Columns.Count))
+40        End If
 
-    For i = 1 To SearchArea.Columns.Count
-        ColText = Trim(SearchArea.Cells(1, i).Value)
+50        For i = 1 To SearchArea.Columns.Count
+60            ColText = Trim(SearchArea.Cells(1, i).Value)
 
-        Do While InStr(ColText, "  ")
-            ColText = Replace(ColText, "  ", " ")
-        Loop
+70            Do While InStr(ColText, "  ")
+80                ColText = Replace(ColText, "  ", " ")
+90            Loop
 
-        If ColText = HeaderText Then
-            FindColumn = i
-            Exit For
-        End If
-    Next
+100           If ColText = HeaderText Then
+110               FindColumn = i
+120               Exit For
+130           End If
+140       Next
 
-    If FindColumn = 0 Then Err.Raise CustErr.COLNOTFOUND, "FindColumn", HeaderText
+150       If FindColumn = 0 Then Err.Raise CustErr.COLNOTFOUND, "FindColumn", HeaderText
 End Function
 

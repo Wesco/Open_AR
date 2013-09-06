@@ -9,10 +9,10 @@ Option Explicit
 ' Ex    : FileExists "C:\autoexec.bat"
 '---------------------------------------------------------------------------------------
 Function FileExists(ByVal sPath As String) As Boolean
-    'Remove trailing backslash
-    If InStr(Len(sPath), sPath, "\") > 0 Then sPath = Left(sPath, Len(sPath) - 1)
-    'Check to see if the directory exists and return true/false
-    If Dir(sPath, vbDirectory) <> "" Then FileExists = True
+          'Remove trailing backslash
+10        If InStr(Len(sPath), sPath, "\") > 0 Then sPath = Left(sPath, Len(sPath) - 1)
+          'Check to see if the directory exists and return true/false
+20        If Dir(sPath, vbDirectory) <> "" Then FileExists = True
 End Function
 
 '---------------------------------------------------------------------------------------
@@ -23,10 +23,10 @@ End Function
 ' Ex    : FolderExists "C:\Program Files\"
 '---------------------------------------------------------------------------------------
 Function FolderExists(ByVal sPath As String) As Boolean
-    'Add trailing backslash
-    If InStr(Len(sPath), sPath, "\") = 0 Then sPath = sPath & "\"
-    'If the folder exists return true
-    If Dir(sPath, vbDirectory) <> "" Then FolderExists = True
+          'Add trailing backslash
+10        If InStr(Len(sPath), sPath, "\") = 0 Then sPath = sPath & "\"
+          'If the folder exists return true
+20        If Dir(sPath, vbDirectory) <> "" Then FolderExists = True
 End Function
 
 '---------------------------------------------------------------------------------------
@@ -36,32 +36,32 @@ End Function
 ' Ex    : RecMkDir "C:\Dir1\Dir2\Dir3\"
 '---------------------------------------------------------------------------------------
 Sub RecMkDir(ByVal sPath As String)
-    Dim sDirArray() As String   'Folder names
-    Dim sDrive As String        'Base drive
-    Dim sNewPath As String      'Path builder
-    Dim i As Long               'Counter
+          Dim sDirArray() As String   'Folder names
+          Dim sDrive As String        'Base drive
+          Dim sNewPath As String      'Path builder
+          Dim i As Long               'Counter
 
-    'Add trailing slash
-    If Right(sPath, 1) <> "\" Then
-        sPath = sPath & "\"
-    End If
+          'Add trailing slash
+10        If Right(sPath, 1) <> "\" Then
+20            sPath = sPath & "\"
+30        End If
 
-    'Split at each \
-    sDirArray = Split(sPath, "\")
-    sDrive = sDirArray(0) & "\"
+          'Split at each \
+40        sDirArray = Split(sPath, "\")
+50        sDrive = sDirArray(0) & "\"
 
-    'Loop through each directory
-    For i = 1 To UBound(sDirArray) - 1
-        If Len(sNewPath) = 0 Then
-            sNewPath = sDrive & sNewPath & sDirArray(i) & "\"
-        Else
-            sNewPath = sNewPath & sDirArray(i) & "\"
-        End If
+          'Loop through each directory
+60        For i = 1 To UBound(sDirArray) - 1
+70            If Len(sNewPath) = 0 Then
+80                sNewPath = sDrive & sNewPath & sDirArray(i) & "\"
+90            Else
+100               sNewPath = sNewPath & sDirArray(i) & "\"
+110           End If
 
-        If Not FolderExists(sNewPath) Then
-            MkDir sNewPath
-        End If
-    Next
+120           If Not FolderExists(sNewPath) Then
+130               MkDir sNewPath
+140           End If
+150       Next
 End Sub
 
 '---------------------------------------------------------------------------------------
@@ -70,6 +70,6 @@ End Sub
 ' Desc : Deletes a file
 '---------------------------------------------------------------------------------------
 Sub DeleteFile(FileName As String)
-    On Error Resume Next
-    Kill FileName
+10        On Error Resume Next
+20        Kill FileName
 End Sub
