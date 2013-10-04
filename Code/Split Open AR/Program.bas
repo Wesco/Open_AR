@@ -29,89 +29,94 @@ Sub Main()
 70            Exit Sub
 80        End If
 
-90        On Error GoTo UID_ERR
-100       For j = 1 To OAR.Worksheets.Count
-110           Set s = OAR.Worksheets(j)
+90        Application.DisplayAlerts = False
+100       Application.ScreenUpdating = False
+
+110       On Error GoTo UID_ERR
+120       For j = 1 To OAR.Worksheets.Count
+130           Set s = OAR.Worksheets(j)
               'Sheets with outside sales names are yellow, claim sheets are red
               '6 = Yellow, 3 = Red
-120           If s.Tab.ColorIndex = 6 Then
-130               s.AutoFilterMode = False
-140               TotalCols = s.Columns(Columns.Count).End(xlToLeft).Column
-150               br = s.Cells(2, FindColumn("br", s.Range(s.Cells(1, 1), s.Cells(1, TotalCols)))).Value
-160               os_name = s.Cells(2, FindColumn("os_name", s.Range(s.Cells(1, 1), s.Cells(1, TotalCols)))).Value
+140           If s.Tab.ColorIndex = 6 Then
+150               s.AutoFilterMode = False
+160               TotalCols = s.Columns(Columns.Count).End(xlToLeft).Column
+170               br = s.Cells(2, FindColumn("br", s.Range(s.Cells(1, 1), s.Cells(1, TotalCols)))).Value
+180               os_name = s.Cells(2, FindColumn("os_name", s.Range(s.Cells(1, 1), s.Cells(1, TotalCols)))).Value
 
-170               InsertUID WS:=s
+190               InsertUID WS:=s
 
-180               OARPath = "\\7938-HP02\Shared\" & br & " Open AR\" & UCase(os_name) & "\"
-190               If Not FolderExists(OARPath) Then
-200                   RecMkDir OARPath
-210               End If
+200               OARPath = "\\7938-HP02\Shared\" & br & " Open AR\" & UCase(os_name) & "\"
+210               If Not FolderExists(OARPath) Then
+220                   RecMkDir OARPath
+230               End If
 
-220               For i = 0 To 120
-230                   OldOARFile = s.Name & " " & Format(Date - i, "yyyy-mm-dd") & ".xlsx"
-240                   If FileExists(OARPath & OldOARFile) Then
-250                       Set OldARWkbk = Workbooks.Open(OARPath & OldOARFile)
-260                       Exit For
-270                   End If
-280               Next
+240               For i = 0 To 120
+250                   OldOARFile = s.Name & " " & Format(Date - i, "yyyy-mm-dd") & ".xlsx"
+260                   If FileExists(OARPath & OldOARFile) Then
+270                       Set OldARWkbk = Workbooks.Open(OARPath & OldOARFile)
+280                       Exit For
+290                   End If
+300               Next
 
-290               If TypeName(OldARWkbk) <> "Nothing" Then
-300                   InsertUID OldARWkbk.Sheets(s.Name)
-310                   InsertNotes s, OldARWkbk
-320                   OldARWkbk.Saved = True
-330                   OldARWkbk.Close
-340               End If
+310               If TypeName(OldARWkbk) <> "Nothing" Then
+320                   InsertUID OldARWkbk.Sheets(s.Name)
+330                   InsertNotes s, OldARWkbk
+340                   OldARWkbk.Saved = True
+350                   OldARWkbk.Close
+360               End If
 
-350               Set NewARWkbk = Workbooks.Add
-360               Application.DisplayAlerts = False
-370               NewARWkbk.Sheets(3).Delete
-380               NewARWkbk.Sheets(2).Delete
-390               Application.DisplayAlerts = True
-400               NewARWkbk.Sheets(1).Name = s.Name
+370               Set NewARWkbk = Workbooks.Add
+380               Application.DisplayAlerts = False
+390               NewARWkbk.Sheets(3).Delete
+400               NewARWkbk.Sheets(2).Delete
+410               Application.DisplayAlerts = True
+420               NewARWkbk.Sheets(1).Name = s.Name
 
-410               TotalRows = s.Rows(Rows.Count).End(xlUp).Row + 2
-420               TotalCols = s.Columns(Columns.Count).End(xlToLeft).Column
-430               s.Range(s.Cells(1, 1), s.Cells(TotalRows, TotalCols)).Copy Destination:=NewARWkbk.Sheets(1).Range("A1")
+430               TotalRows = s.Rows(Rows.Count).End(xlUp).Row + 2
+440               TotalCols = s.Columns(Columns.Count).End(xlToLeft).Column
+450               s.Range(s.Cells(1, 1), s.Cells(TotalRows, TotalCols)).Copy Destination:=NewARWkbk.Sheets(1).Range("A1")
 
-440               NewARFile = s.Name & " " & Format(Date, "yyyy-mm-dd") & ".xlsx"
-450               NewARWkbk.SaveAs OARPath & NewARFile, xlOpenXMLWorkbook
-460               NewARWkbk.Close
-470           End If
-480       Next
-490       On Error GoTo 0
-500       OAR.Saved = True
-510       OAR.Close
-520       Exit Sub
+460               NewARFile = s.Name & " " & Format(Date, "yyyy-mm-dd") & ".xlsx"
+470               NewARWkbk.SaveAs OARPath & NewARFile, xlOpenXMLWorkbook
+480               NewARWkbk.Close
+490           End If
+500       Next
+510       On Error GoTo 0
+520       OAR.Saved = True
+530       OAR.Close
+540       Application.DisplayAlerts = True
+550       Application.ScreenUpdating = True
+560       Exit Sub
 
 UID_ERR:
-530       Application.DisplayAlerts = False
-540       If Err.Number = CustErr.COLNOTFOUND Then
-550           MsgBox "Column '" & Err.Description & "' could not be found on '" & s.Name & "'"
-560       Else
-570           MsgBox Err.Description, vbOKOnly, Err.Source & " Ln# " & Erl
-580       End If
+570       Application.DisplayAlerts = False
+580       If Err.Number = CustErr.COLNOTFOUND Then
+590           MsgBox "Column '" & Err.Description & "' could not be found on '" & s.Name & "'"
+600       Else
+610           MsgBox Err.Description, vbOKOnly, Err.Source & " Ln# " & Erl
+620       End If
 
-590       If TypeName(OAR) <> "Nothing" Then
-600           On Error Resume Next
-610           OAR.Saved = True
-620           OAR.Close
-630           On Error GoTo 0
-640       End If
+630       If TypeName(OAR) <> "Nothing" Then
+640           On Error Resume Next
+650           OAR.Saved = True
+660           OAR.Close
+670           On Error GoTo 0
+680       End If
 
-650       If TypeName(NewARWkbk) <> "Nothing" Then
-660           On Error Resume Next
-670           NewARWkbk.Saved = True
-680           NewARWkbk.Close
-690           On Error GoTo 0
-700       End If
+690       If TypeName(NewARWkbk) <> "Nothing" Then
+700           On Error Resume Next
+710           NewARWkbk.Saved = True
+720           NewARWkbk.Close
+730           On Error GoTo 0
+740       End If
 
-710       If TypeName(OldARWkbk) <> "Nothing" Then
-720           On Error Resume Next
-730           OldARWkbk.Saved = True
-740           OldARWkbk.Close
-750           On Error GoTo 0
-760       End If
-770       Application.DisplayAlerts = True
+750       If TypeName(OldARWkbk) <> "Nothing" Then
+760           On Error Resume Next
+770           OldARWkbk.Saved = True
+780           OldARWkbk.Close
+790           On Error GoTo 0
+800       End If
+810       Application.DisplayAlerts = True
 End Sub
 
 Sub InsertUID(WS As Worksheet)
