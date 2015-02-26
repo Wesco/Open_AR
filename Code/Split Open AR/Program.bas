@@ -32,7 +32,7 @@ Sub Main()
     Application.DisplayAlerts = False
     Application.ScreenUpdating = False
 
-    On Error GoTo UID_ERR
+    'On Error GoTo UID_ERR
     For j = 1 To OAR.Worksheets.Count
         Set s = OAR.Worksheets(j)
         'Sheets with outside sales names are yellow, claim sheets are red
@@ -54,12 +54,16 @@ Sub Main()
                 OldOARFile = s.Name & " " & Format(Date - i, "yyyy-mm-dd") & ".xlsx"
                 If FileExists(OARPath & OldOARFile) Then
                     Set OldARWkbk = Workbooks.Open(OARPath & OldOARFile)
+                    ActiveSheet.AutoFilterMode = False
+                    ActiveSheet.Rows.Hidden = False
+                    ActiveSheet.Columns.Hidden = False
                     Exit For
                 End If
             Next
 
-            If TypeName(OldARWkbk) <> "Nothing" Then
-                InsertUID OldARWkbk.Sheets(s.Name)
+            'Check to see if the workbook was opened
+            If TypeName(OldARWkbk) <> "Object" And TypeName(OldARWkbk) <> "Nothing" Then
+                InsertUID OldARWkbk.Sheets(Trim(s.Name))
                 InsertNotes s, OldARWkbk
                 OldARWkbk.Saved = True
                 OldARWkbk.Close
@@ -77,11 +81,13 @@ Sub Main()
             s.Range(s.Cells(1, 1), s.Cells(TotalRows, TotalCols)).Copy Destination:=NewARWkbk.Sheets(1).Range("A1")
 
             NewARFile = s.Name & " " & Format(Date, "yyyy-mm-dd") & ".xlsx"
+            Application.DisplayAlerts = False
             NewARWkbk.SaveAs OARPath & NewARFile, xlOpenXMLWorkbook
             NewARWkbk.Close
+            Application.DisplayAlerts = True
         End If
     Next
-    On Error GoTo 0
+    'On Error GoTo 0
     OAR.Saved = True
     OAR.Close
     Application.DisplayAlerts = True
@@ -93,6 +99,7 @@ UID_ERR:
         MsgBox "Column '" & Err.Description & "' could not be found on '" & s.Name & "'"
     Else
         MsgBox Err.Description, vbOKOnly, Err.Source & " Ln# " & Erl
+        Debug.Print Err.Source & " Ln# " & Erl
     End If
 End Sub
 
